@@ -7,7 +7,7 @@ const TOTAL_HOLES = 18;
 export default function ScoreCard() {
   const [currentHole, setCurrentHole] = useState(1);
   const [scores, setScores] = useState<number[]>(
-    Array(TOTAL_HOLES).fill(3)
+      Array(TOTAL_HOLES).fill(0)
   );
 
   const currentIndex = currentHole - 1;
@@ -24,7 +24,7 @@ export default function ScoreCard() {
   const decrement = () => {
     setScores((prev) => {
       const copy = [...prev];
-      if (copy[currentIndex] > 1) {
+      if (copy[currentIndex] > 0) {
         copy[currentIndex] -= 1;
       }
       return copy;
