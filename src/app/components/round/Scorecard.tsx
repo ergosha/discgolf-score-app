@@ -4,6 +4,8 @@ import { useState } from "react";
 
 const TOTAL_HOLES = 18;
 
+const PARS = Array(TOTAL_HOLES).fill(3);
+
 export default function ScoreCard() {
   const [currentHole, setCurrentHole] = useState(1);
   const [scores, setScores] = useState<number[]>(
@@ -11,6 +13,9 @@ export default function ScoreCard() {
   );
 
   const currentIndex = currentHole - 1;
+  const holePar = PARS[currentIndex];
+  const holeScore = scores[currentIndex];
+  const relativeToPar = holeScore - holePar;
   const totalScore = scores.reduce((a, b) => a + b, 0);
 
   const increment = () => {
@@ -37,9 +42,32 @@ export default function ScoreCard() {
         <p className="text-sm text-gray-500">
           Hole {currentHole} / {TOTAL_HOLES}
         </p>
-        <p className="text-4xl font-bold">
-          {scores[currentIndex]}
+
+        <p className="text-sm text-gray-500 mt-1">
+          Par {holePar}
         </p>
+
+        <p className="text-4xl font-bold mt-2">
+          {holeScore}
+        </p>
+
+        {holeScore > 0 && (
+          <p
+            className={`text-sm mt-1 ${
+              relativeToPar > 0
+                ? "text-red-600"
+                : relativeToPar < 0
+                ? "text-green-600"
+                : "text-gray-600"
+            }`}
+          >
+            {relativeToPar === 0
+              ? "Even par"
+              : relativeToPar > 0
+              ? `+${relativeToPar}`
+              : relativeToPar}
+          </p>
+        )}
       </div>
 
       <div className="flex gap-6">
