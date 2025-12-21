@@ -1,5 +1,7 @@
 "use client";
 
+import { addRound } from "@/app/lib/roundStore";
+
 import { useState } from "react";
 
 const TOTAL_HOLES = 18;
@@ -166,6 +168,24 @@ export default function ScoreCard() {
       <p className="text-sm text-gray-600">
         Total score: <strong>{totalScore}</strong>
       </p>
+
+      <button
+        onClick={() => {
+        addRound({
+        id: Date.now().toString(),
+        date: new Date().toLocaleString(),
+        totalScore,
+        });
+
+        // reset round
+        setScores(Array(TOTAL_HOLES).fill(0));
+        setCurrentHole(1);
+      }}
+  className="px-4 py-2 bg-green-600 text-white rounded"
+      >
+  Finish Round
+      </button>
+
     </div>
   );
 }
