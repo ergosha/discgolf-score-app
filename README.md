@@ -12,7 +12,6 @@ Mobile-first disc golf score tracking app.
 - Simple hole-by-hole scoring
 - Works great on mobile devices
 - Offline-first support
-- Clean, public GitHub project
 
 ## Status
 🚧 In development
