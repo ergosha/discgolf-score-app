@@ -1,45 +1,112 @@
 "use client";
 
-import { addRound } from "@/app/lib/roundStore";
-
 import { useState } from "react";
 
 const TOTAL_HOLES = 18;
 const PARS = Array(TOTAL_HOLES).fill(3);
 
+type Player = {
+  id: string;
+  name: string;
+  scores: number[];
+};
+
+type Round = {
+  id: string;
+  date: string;
+  players: Player[];
+};
+
+
 export default function ScoreCard() {
   const [currentHole, setCurrentHole] = useState(1);
-  const [scores, setScores] = useState<number[]>(
-    Array(TOTAL_HOLES).fill(0)
-  );
   const [view, setView] = useState<"hole" | "overview">("hole");
 
+  const [players, setPlayers] = useState<Player[]>([
+    {
+      id: "p1",
+      name: "Player 1",
+      scores: Array(TOTAL_HOLES).fill(0),
+    },
+  ]);
+
+  const [activePlayerIndex, setActivePlayerIndex] = useState(0);
+
   const currentIndex = currentHole - 1;
+  const activePlayer = players[activePlayerIndex];
+  const scores = activePlayer.scores;
+
   const holePar = PARS[currentIndex];
   const holeScore = scores[currentIndex];
   const relativeToPar = holeScore - holePar;
   const totalScore = scores.reduce((a, b) => a + b, 0);
 
   const increment = () => {
-    setScores((prev) => {
+    setPlayers((prev) => {
       const copy = [...prev];
-      copy[currentIndex] += 1;
+      const player = { ...copy[activePlayerIndex] };
+      const scoresCopy = [...player.scores];
+
+      scoresCopy[currentIndex] += 1;
+      player.scores = scoresCopy;
+      copy[activePlayerIndex] = player;
+
       return copy;
     });
   };
 
   const decrement = () => {
-    setScores((prev) => {
+    setPlayers((prev) => {
       const copy = [...prev];
-      if (copy[currentIndex] > 0) {
-        copy[currentIndex] -= 1;
+      const player = { ...copy[activePlayerIndex] };
+      const scoresCopy = [...player.scores];
+
+      if (scoresCopy[currentIndex] > 0) {
+        scoresCopy[currentIndex] -= 1;
       }
+
+      player.scores = scoresCopy;
+      copy[activePlayerIndex] = player;
+
       return copy;
     });
   };
 
   return (
     <div className="flex flex-col items-center gap-6">
+
+      {/* Player selector */}
+      <div className="flex gap-2 overflow-x-auto">
+        {players.map((player, index) => (
+          <button
+            key={player.id}
+            onClick={() => setActivePlayerIndex(index)}
+            className={`px-3 py-1 rounded border ${
+              index === activePlayerIndex
+                ? "bg-gray-800 text-white"
+                : "bg-white"
+            }`}
+          >
+            {player.name}
+          </button>
+        ))}
+      </div>
+
+      <button
+        onClick={() =>
+          setPlayers((prev) => [
+            ...prev,
+            {
+              id: Date.now().toString(),
+              name: `Player ${prev.length + 1}`,
+              scores: Array(TOTAL_HOLES).fill(0),
+            },
+          ])
+        }
+        className="text-sm text-blue-600 underline"
+      >
+        + Add player
+      </button>
 
       {/* View toggle */}
       <div className="flex gap-2">
@@ -166,28 +233,44 @@ export default function ScoreCard() {
       )}
 
       <p className="text-sm text-gray-600">
-        Total score: <strong>{totalScore}</strong>
+        Total score ({activePlayer.name}):{" "}
+        <strong>{totalScore}</strong>
       </p>
 
       <button
-        onClick={() => {
-        addRound({
-        id: Date.now().toString(),
-        date: new Date().toLocaleString(),
-        totalScore,
-        });
+  onClick={() => {
+    const stored = localStorage.getItem("roundHistory");
+    const existing: Round[] = stored ? JSON.parse(stored) : [];
 
-        // reset round
-        setScores(Array(TOTAL_HOLES).fill(0));
-        setCurrentHole(1);
-      }}
+    const newRound: Round = {
+      id: Date.now().toString(),
+      date: new Date().toLocaleString(),
+      players,
+    };
+
+    localStorage.setItem(
+      "roundHistory",
+      JSON.stringify([newRound, ...existing])
+    );
+
+    // Reset round
+    setPlayers([
+      {
+        id: "p1",
+        name: "Player 1",
+        scores: Array(TOTAL_HOLES).fill(0),
+      },
+    ]);
+    setActivePlayerIndex(0);
+    setCurrentHole(1);
+  }}
   className="px-4 py-2 bg-green-600 text-white rounded"
-      >
+>
   Finish Round
-      </button>
-
+</button>
     </div>
   );
 }
+
 
 
