@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 type Player = {
@@ -41,23 +42,28 @@ export default function HistoryPage() {
               key={round.id}
               className="p-4 bg-white border rounded"
             >
-              <p className="font-semibold">
-                {round.date}
-              </p>
+              <Link href={`/history/${round.id}`} className="block">
+                <p className="font-semibold mb-2">
+                  {round.date}
+                </p>
 
-              <ul className="text-sm space-y-1">
-                {round.players.map((player) => (
-                  <li key={player.id}>
-                    {player.name}:{" "}
-                    {player.scores.reduce((a, b) => a + b, 0)}
-                  </li>
-                ))}
-              </ul>
+                <ul className="space-y-1 text-sm">
+                  {round.players.map((player) => (
+                    <li key={player.id}>
+                      {player.name}:{" "}
+                      <strong>
+                        {player.scores.reduce((a, b) => a + b, 0)}
+                      </strong>
+                    </li>
+                  ))}
+                </ul>
+              </Link>
             </li>
           ))}
         </ul>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 }
 
