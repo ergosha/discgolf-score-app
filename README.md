@@ -1,24 +1,39 @@
-# Discgolf Score App
+# Disc Golf Score App
 
-A small web app to track disc golf rounds, scores, and round history. Built with Next.js (app router) and TypeScript — focused on a simple, mobile-first scorecard and round history.
+A mobile-first web application for tracking disc golf rounds, scores, and round history. The app focuses on a simple and fast scoring experience optimized for use on a phone during a round.
 
-## Features
+## Overview
+Disc Golf Score App allows players to track hole-by-hole scores, view live totals, and review completed rounds through a clear round history. The application is designed to be lightweight and usable without accounts or sign-up.
 
-- Real-time scorecard for tracking strokes per hole
-- Round history with per-round detail pages
-- Mobile-friendly layout and bottom navigation
-- Lightweight, no-signup local-first experience (stores data in browser)
+## Key Features
+- Hole-by-hole score tracking for multiple players
+- Real-time total score calculation
+- Automatic winner detection at the end of a round
+- Round history with per-round detail views
+- Mobile-friendly layout with bottom navigation
+- Local-first data storage using the browser
+
+## Technical Highlights
+- State-driven UI with per-player and per-hole score management
+- Derived state for total scores and winner calculation
+- Reusable React components for scorecards and round views
+- Mobile-first layout designed for touch interaction
+- Type-safe data models using TypeScript
+
+## Screenshots
+
 
 ## Tech Stack
-
 - Next.js (App Router)
 - TypeScript
 - React
-- Tailwind / CSS modules (project styles)
+- Tailwind CSS / CSS Modules
 
-## Prerequisites
+## Development Setup
 
-- Node.js 18+ and a package manager (`npm`, `pnpm`, or `yarn`).
+### Prerequisites
+- Node.js 18+
+- npm, pnpm, or yarn
 
 ## Install
 
