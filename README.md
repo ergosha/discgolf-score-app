@@ -22,6 +22,20 @@ Disc Golf Score App allows players to track hole-by-hole scores, view live total
 
 ## Screenshots
 
+### Homepage
+![Homepage](screenshots/homepage.jpg)
+
+### Hole Scoring
+![Hole scoring view](screenshots/scoring-hole.png)
+
+### Overview
+![Overview grid](screenshots/scoring-overview.png)
+
+### Round History
+![Round history](screenshots/round-history.png)
+
+### Round Details
+![Round details](screenshots/round-details.png)
 
 ## Tech Stack
 - Next.js (App Router)
