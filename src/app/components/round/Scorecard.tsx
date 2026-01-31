@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const TOTAL_HOLES = 18;
 const PARS = Array(TOTAL_HOLES).fill(3);
@@ -17,19 +18,15 @@ type Round = {
   players: Player[];
 };
 
+interface ScoreCardProps {
+  initialPlayers: Player[];
+}
 
-export default function ScoreCard() {
+export default function ScoreCard({ initialPlayers }: ScoreCardProps) {
+  const router = useRouter();
   const [currentHole, setCurrentHole] = useState(1);
   const [view, setView] = useState<"hole" | "overview">("hole");
-
-  const [players, setPlayers] = useState<Player[]>([
-    {
-      id: "p1",
-      name: "Player 1",
-      scores: Array(TOTAL_HOLES).fill(0),
-    },
-  ]);
-
+  const [players, setPlayers] = useState<Player[]>(initialPlayers);
   const [activePlayerIndex, setActivePlayerIndex] = useState(0);
 
   const currentIndex = currentHole - 1;
@@ -91,22 +88,6 @@ export default function ScoreCard() {
           </button>
         ))}
       </div>
-
-      <button
-        onClick={() =>
-          setPlayers((prev) => [
-            ...prev,
-            {
-              id: Date.now().toString(),
-              name: `Player ${prev.length + 1}`,
-              scores: Array(TOTAL_HOLES).fill(0),
-            },
-          ])
-        }
-        className="text-sm text-blue-600 underline"
-      >
-        + Add player
-      </button>
 
       {/* View toggle */}
       <div className="flex gap-2">
@@ -253,16 +234,11 @@ export default function ScoreCard() {
       JSON.stringify([newRound, ...existing])
     );
 
-    // Reset round
-    setPlayers([
-      {
-        id: "p1",
-        name: "Player 1",
-        scores: Array(TOTAL_HOLES).fill(0),
-      },
-    ]);
-    setActivePlayerIndex(0);
-    setCurrentHole(1);
+    // Reset and clear current round players
+    localStorage.removeItem("currentRoundPlayers");
+    
+    // Navigate back to setup for next round
+    router.push("/round/setup");
   }}
   className="px-4 py-2 bg-green-600 text-white rounded"
 >
