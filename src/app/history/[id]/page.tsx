@@ -14,9 +14,8 @@ type Round = {
   id: string;
   date: string;
   players: Player[];
+  pars?: number[]; // Optional for backward compatibility
 };
-
-const PAR = 3;
 
 export default function RoundDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -47,6 +46,9 @@ export default function RoundDetailPage() {
 
   const totals = round.players.map((p) => playerTotal(p.scores));
   const bestScore = Math.min(...totals);
+  
+  // Use pars from round data, fallback to 3 for older rounds
+  const pars = round.pars || Array(18).fill(3);
 
    return (
     <div className="p-4 space-y-6">
@@ -87,9 +89,9 @@ export default function RoundDetailPage() {
                   className={`border rounded p-2 text-center ${
                     score === 0
                       ? "bg-gray-100"
-                      : score < PAR
+                      : score < pars[index]
                       ? "bg-green-100 text-green-800"
-                      : score > PAR
+                      : score > pars[index]
                       ? "bg-red-100 text-red-800"
                       : "bg-gray-200"
                   }`}

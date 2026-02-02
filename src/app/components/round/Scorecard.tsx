@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const TOTAL_HOLES = 18;
-const PARS = Array(TOTAL_HOLES).fill(3);
 
 type Player = {
   id: string;
@@ -16,6 +15,7 @@ type Round = {
   id: string;
   date: string;
   players: Player[];
+  pars: number[];
 };
 
 interface ScoreCardProps {
@@ -27,16 +27,23 @@ export default function ScoreCard({ initialPlayers }: ScoreCardProps) {
   const [currentHole, setCurrentHole] = useState(1);
   const [view, setView] = useState<"hole" | "overview">("hole");
   const [players, setPlayers] = useState<Player[]>(initialPlayers);
+  const [pars, setPars] = useState<number[]>(Array(TOTAL_HOLES).fill(3));
   const [activePlayerIndex, setActivePlayerIndex] = useState(0);
 
   const currentIndex = currentHole - 1;
   const activePlayer = players[activePlayerIndex];
   const scores = activePlayer.scores;
 
-  const holePar = PARS[currentIndex];
+  const holePar = pars[currentIndex];
   const holeScore = scores[currentIndex];
   const relativeToPar = holeScore - holePar;
   const totalScore = scores.reduce((a, b) => a + b, 0);
+
+  const updatePar = (newPar: number) => {
+    const newPars = [...pars];
+    newPars[currentIndex] = Math.max(1, Math.min(9, newPar));
+    setPars(newPars);
+  };
 
   const increment = () => {
     setPlayers((prev) => {
@@ -117,9 +124,26 @@ export default function ScoreCard({ initialPlayers }: ScoreCardProps) {
               Hole {currentHole} / {TOTAL_HOLES}
             </p>
 
-            <p className="text-sm text-gray-500 mt-1">
-              Par {holePar}
-            </p>
+            <div className="flex items-center justify-center gap-2 mt-2">
+              <span className="text-sm text-gray-500">Par</span>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => updatePar(holePar - 1)}
+                  className="w-6 h-6 rounded bg-gray-200 text-sm flex items-center justify-center"
+                  disabled={holePar <= 1}
+                >
+                  −
+                </button>
+                <span className="text-lg font-semibold w-8 text-center">{holePar}</span>
+                <button
+                  onClick={() => updatePar(holePar + 1)}
+                  className="w-6 h-6 rounded bg-gray-200 text-sm flex items-center justify-center"
+                  disabled={holePar >= 9}
+                >
+                  +
+                </button>
+              </div>
+            </div>
 
             <p className="text-4xl font-bold mt-2">
               {holeScore}
@@ -182,7 +206,7 @@ export default function ScoreCard({ initialPlayers }: ScoreCardProps) {
       {view === "overview" && (
         <div className="grid grid-cols-6 gap-3">
           {scores.map((score, index) => {
-            const relative = score - PARS[index];
+            const relative = score - pars[index];
 
             return (
               <button
@@ -227,6 +251,7 @@ export default function ScoreCard({ initialPlayers }: ScoreCardProps) {
       id: Date.now().toString(),
       date: new Date().toLocaleString(),
       players,
+      pars,
     };
 
     localStorage.setItem(
